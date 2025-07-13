@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>砍校长 - 你也来砍一刀吧！</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #e74c3c;
+            --primary-dark: #c0392b;
+            --secondary: #3498db;
+            --secondary-dark: #2980b9;
+            --accent: #f39c12;
+            --background: #f5f5f5;
+            --card: #ffffff;
+            --text: #333333;
+            --text-light: #777777;
+            --success: #2ecc71;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --header-height: 60px;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* 顶部导航 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .logo i {
+            margin-right: 8px;
+            font-size: 1.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #9b59b6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .main-content {
+            padding: 20px;
+            padding-top: calc(var(--header-height) + 20px);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* 游戏标题 */
+        .game-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-shadow: 0 2px 4px var(--shadow);
+        }
+
+        /* 进度条 */
+        .progress-container {
+            background-color: var(--card);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 12px var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f1c40f, #e67e22);
+            width: 35%;
+            border-radius: 10px;
+            position: relative;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        /* 校长区域 */
+        .principal-area {
+            background-color: var(--card);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 12px var(--shadow);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .principal-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+        }
+
+        .principal {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .principal.hit {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .face {
+            width: 100px;
+            height: 100px;
+            background: #f1c40f;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .eye {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background-color: white;
+            border-radius: 50%;
+            top: 30px;
+        }
+
+        .eye.left {
+            left: 20px;
+        }
+
+        .eye.right {
+            right: 20px;
+        }
+
+        .pupil {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #2c3e50;
+            border-radius: 50%;
+            top: 5px;
+            left: 5px;
+        }
+
+        .mouth {
+            position: absolute;
+            width: 50px;
+            height: 20px;
+            border-bottom: 3px solid #2c3e50;
+            border-radius: 0 0 25px 25px;
+            bottom: 25px;
+            left: 25px;
+        }
+
+        .hp-bar {
+            background-color: #ecf0f1;
+            height: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .hp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            width: 99.9999%;
+            border-radius: 6px;
+            transition: width 0.5s;
+        }
+
+        .damage-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .damage-info span {
+            font-weight: bold;
+            color: var(--text);
+        }
+
+        /* 游戏按钮 */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 18px;
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .cut-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        }
+
+        .share-btn {
+            background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+        }
+
+        /* 好友区域 */
+        .friends-section {
+            background-color: var(--card);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 12px var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text);
+        }
+
+        .section-title i {
+            margin-right: 10px;
+            color: var(--secondary);
+        }
+
+        .friends-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .friend {
+            text-align: center;
+        }
+
+        .friend-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            position: relative;
+        }
+
+        .friend-avatar.helped::after {
+            content: "✓";
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 24px;
+            height: 24px;
+            background-color: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            border: 2px solid white;
+        }
+
+        .friend-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .friend-damage {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* 游戏统计 */
+        .stats-container {
+            background-color: var(--card);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 12px var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-card {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 5px 0;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        /* 游戏提示 */
+        .game-tip {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item i {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        /* 伤害动画 */
+        .damage-animation {
+            position: absolute;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            animation: damageFloat 1.5s forwards;
+            z-index: 50;
+        }
+
+        @keyframes damageFloat {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+        }
+
+        /* 安装提示 */
+        .install-prompt {
+            position: fixed;
+            bottom: 80px;
+            left: 15px;
+            right: 15px;
+            background-color: var(--card);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            z-index: 100;
+            transform: translateY(150%);
+            transition: transform 0.5s ease;
+        }
+
+        .install-prompt.show {
+            transform: translateY(0);
+        }
+
+        .install-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent), #e67e22);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+        .install-text {
+            flex: 1;
+        }
+
+        .install-text p {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .install-text strong {
+            color: var(--primary);
+        }
+
+        .install-btn {
+            background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* 动画效果 */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 400px) {
+            .principal-container {
+                width: 170px;
+                height: 170px;
+            }
+
+            .face {
+                width: 85px;
+                height: 85px;
+            }
+
+            .friends-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .btn {
+                padding: 16px;
+                font-size: 1rem;
+            }
+
+            .game-title {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="header">
+        <div class="logo">
+            <i class="fas fa-cut"></i>
+            <span>砍校长</span>
+        </div>
+        <div class="user-info">
+            <div class="user-avatar">玩</div>
+        </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <h1 class="game-title">我在砍校长，你也来砍一刀吧！</h1>
+
+        <!-- 进度条 -->
+        <div class="progress-container">
+            <div class="progress-header">
+                <span>砍刀进度</span>
+                <span>35%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill">
+                    <div class="progress-text">35%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 校长区域 -->
+        <div class="principal-area">
+            <div class="principal-container">
+                <div class="principal" id="principal">
+                    <div class="face">
+                        <div class="eye left">
+                            <div class="pupil"></div>
+                        </div>
+                        <div class="eye right">
+                            <div class="pupil"></div>
+                        </div>
+                        <div class="mouth"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hp-bar">
+                <div class="hp-fill" id="hp-fill"></div>
+            </div>
+
+            <div class="damage-info">
+                <div>已砍: <span id="total-damage">0.00000000</span>%</div>
+                <div>剩余: <span id="remaining">100.00000000</span>%</div>
+            </div>
+        </div>
+
+        <!-- 游戏按钮 -->
+        <div class="action-buttons">
+            <button class="btn cut-btn pulse" id="cut-btn">
+                <i class="fas fa-cut"></i>
+                砍一刀
+            </button>
+            <button class="btn share-btn" id="share-btn">
+                <i class="fas fa-share-alt"></i>
+                分享给好友
+            </button>
+        </div>
+
+        <!-- 好友区域 -->
+        <div class="friends-section">
+            <div class="section-title">
+                <i class="fas fa-users"></i>
+                <span>已邀请好友 (<span id="invite-count">0</span>人)</span>
+            </div>
+            <div class="friends-list" id="friends-list">
+                <!-- 好友列表由JS动态生成 -->
+            </div>
+        </div>
+
+        <!-- 游戏统计 -->
+        <div class="stats-container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="cut-count">0</div>
+                    <div class="stat-label">砍刀次数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="last-damage">0.0000</div>
+                    <div class="stat-label">本次伤害</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 游戏提示 -->
+        <div class="game-tip">
+            提示：每次砍刀伤害会指数级减少，校长血量无限！
+        </div>
+
+        <!-- 安装提示 -->
+        <div class="install-prompt" id="install-prompt">
+            <div class="install-icon">
+                <i class="fas fa-download"></i>
+            </div>
+            <div class="install-text">
+                <p>添加到主屏幕，<strong>离线畅玩</strong></p>
+                <p>获得更好的游戏体验</p>
+            </div>
+            <button class="install-btn" id="install-btn">安装</button>
+        </div>
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>首页</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-user-friends"></i>
+            <span>好友</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-trophy"></i>
+            <span>排行榜</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>我的</span>
+        </div>
+    </div>
+
+    <script>
+        // 游戏数据
+        const gameState = {
+            totalDamage: 0.0,
+            remaining: 100.0,
+            cutCount: 0,
+            inviteCount: 0,
+            lastDamage: 0.0,
+            friends: [
+                { id: 1, name: "小明", color: "#3498db", damageFactor: 1.1, helped: false },
+                { id: 2, name: "小红", color: "#e74c3c", damageFactor: 0.9, helped: false },
+                { id: 3, name: "小李", color: "#2ecc71", damageFactor: 1.3, helped: false },
+                { id: 4, name: "小张", color: "#9b59b6", damageFactor: 1.0, helped: false },
+                { id: 5, name: "小王", color: "#f39c12", damageFactor: 0.8, helped: false },
+                { id: 6, name: "小赵", color: "#1abc9c", damageFactor: 1.2, helped: false }
+            ]
+        };
+
+        // DOM元素
+        const principal = document.getElementById('principal');
+        const hpFill = document.getElementById('hp-fill');
+        const totalDamageEl = document.getElementById('total-damage');
+        const remainingEl = document.getElementById('remaining');
+        const cutCountEl = document.getElementById('cut-count');
+        const lastDamageEl = document.getElementById('last-damage');
+        const inviteCountEl = document.getElementById('invite-count');
+        const friendsList = document.getElementById('friends-list');
+        const cutBtn = document.getElementById('cut-btn');
+        const shareBtn = document.getElementById('share-btn');
+        const installPrompt = document.getElementById('install-prompt');
+        const installBtn = document.getElementById('install-btn');
+        const principalContainer = document.querySelector('.principal-container');
+
+        // 初始化游戏
+        function initGame() {
+            updateUI();
+            renderFriends();
+
+            // 添加事件监听
+            cutBtn.addEventListener('click', cutPrincipal);
+            shareBtn.addEventListener('click', shareWithFriends);
+            installBtn.addEventListener('click', installApp);
+
+            // 检查是否支持PWA
+            checkPWAInstallable();
+
+            // 添加底部导航点击事件
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        // 计算伤害百分比
+        function calculateDamage(cutCount) {
+            if (cutCount === 0) return 10.0;
+            return Math.max(0.00000001, 10.0 / Math.pow(2, cutCount * 0.3));
+        }
+
+        // 砍校长
+        function cutPrincipal() {
+            // 计算伤害
+            const damagePercent = calculateDamage(gameState.cutCount);
+            gameState.lastDamage = damagePercent;
+            gameState.totalDamage += damagePercent;
+            gameState.remaining = Math.max(0.00000001, gameState.remaining - damagePercent);
+            gameState.cutCount++;
+
+            // 添加动画效果
+            principal.classList.add('hit');
+            setTimeout(() => {
+                principal.classList.remove('hit');
+            }, 300);
+
+            // 创建伤害动画
+            createDamageAnimation(damagePercent);
+
+            // 更新UI
+            updateUI();
+        }
+
+        // 创建伤害动画
+        function createDamageAnimation(damage) {
+            const damageEl = document.createElement('div');
+            damageEl.className = 'damage-animation';
+            damageEl.textContent = `-${damage.toFixed(8)}%`;
+            damageEl.style.left = `${Math.random() * 100 + 50}px`;
+            principalContainer.appendChild(damageEl);
+
+            // 动画结束后移除元素
+            setTimeout(() => {
+                damageEl.remove();
+            }, 1500);
+        }
+
+        // 分享给好友
+        function shareWithFriends() {
+            gameState.inviteCount++;
+
+            // 随机选择1-3个好友帮忙
+            const helpCount = Math.floor(Math.random() * 3) + 1;
+            let helped = 0;
+
+            gameState.friends.forEach(friend => {
+                if (!friend.helped && Math.random() > 0.5 && helped < helpCount) {
+                    friend.helped = true;
+                    helped++;
+
+                    // 好友砍一刀（伤害略高）
+                    const friendDamage = calculateDamage(gameState.cutCount) * friend.damageFactor;
+                    gameState.totalDamage += friendDamage;
+                    gameState.remaining = Math.max(0.00000001, gameState.remaining - friendDamage);
+
+                    // 创建好友伤害动画
+                    createDamageAnimation(friendDamage);
+                }
+            });
+
+            // 更新UI
+            updateUI();
+            renderFriends();
+        }
+
+        // 更新UI
+        function updateUI() {
+            // 更新校长血量
+            hpFill.style.width = `${gameState.remaining}%`;
+
+            // 更新伤害信息
+            totalDamageEl.textContent = gameState.totalDamage.toFixed(8);
+            remainingEl.textContent = gameState.remaining.toFixed(8);
+
+            // 更新统计
+            cutCountEl.textContent = gameState.cutCount;
+            lastDamageEl.textContent = gameState.lastDamage.toFixed(8);
+            inviteCountEl.textContent = gameState.inviteCount;
+
+            // 更新进度条
+            const progressFill = document.querySelector('.progress-fill');
+            const progressText = document.querySelector('.progress-text');
+            const progress = Math.min(100, gameState.cutCount / 50 * 100);
+            progressFill.style.width = `${progress}%`;
+            progressText.textContent = `${Math.round(progress)}%`;
+        }
+
+        // 渲染好友列表
+        function renderFriends() {
+            friendsList.innerHTML = '';
+
+            gameState.friends.forEach(friend => {
+                const friendEl = document.createElement('div');
+                friendEl.className = 'friend';
+                friendEl.innerHTML = `
+                    <div class="friend-avatar ${friend.helped ? 'helped' : ''}"
+                         style="background-color: ${friend.color}">
+                        ${friend.name.charAt(0)}
+                    </div>
+                    <div class="friend-name">${friend.name}</div>
+                    <div class="friend-damage">x${friend.damageFactor.toFixed(1)}</div>
+                `;
+                friendsList.appendChild(friendEl);
+            });
+        }
+
+        // 检查PWA安装支持
+        function checkPWAInstallable() {
+            let deferredPrompt;
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                // 阻止默认安装提示
+                e.preventDefault();
+                // 保存事件以便稍后触发
+                deferredPrompt = e;
+                // 显示自定义安装提示
+                setTimeout(() => {
+                    installPrompt.classList.add('show');
+                }, 3000);
+            });
+
+            installBtn.addEventListener('click', () => {
+                // 隐藏提示
+                installPrompt.classList.remove('show');
+                // 触发安装提示
+                deferredPrompt.prompt();
+                // 等待用户响应
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('用户接受了安装');
+                    } else {
+                        console.log('用户拒绝了安装');
+                    }
+                    deferredPrompt = null;
+                });
+            });
+        }
+
+        // 安装应用
+        function installApp() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('ServiceWorker 注册成功:', registration);
+                }).catch(error => {
+                    console.log('ServiceWorker 注册失败:', error);
+                });
+            }
+        }
+
+        // 页面加载完成后初始化游戏
+        window.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
